@@ -42,6 +42,7 @@ class Character:
         self.DirectionY = 0
         self.x = 400
         self.y = 400
+        self.speed = 5
         self.isComposite = False
 
     def ChangeBehavior(self, TargetBehavior=Behavior):
@@ -61,49 +62,30 @@ class Character:
         self.Object = load_image(self.CurrentImage.Path)
 
     def EventHandler(self,Events = List[Any]):
-        for event in Events:
-            if event.type == SDL_KEYDOWN:
-                if event.key == SDLK_LEFT:
-                    self.ChangeBehavior('Run')
-                    self.isComposite = True
-                    self.DirectionX -= 1
-                elif event.key == SDLK_RIGHT:
-                    self.ChangeBehavior('Run')
-                    self.DirectionX += 1
-                elif event.key == SDLK_DOWN:
-                    self.ChangeBehavior('Run')
-                    self.DirectionY -= 1
-                elif event.key == SDLK_UP:
-                    self.ChangeBehavior('Run')
-                    self.DirectionY += 1
+
+        pass 
 
 
-            elif event.type == SDL_KEYUP:
-                if event.key == SDLK_LEFT:
-                    self.ChangeBehavior('Idle')
-                    self.isComposite = False
-                    self.DirectionX += 1
-                elif event.key == SDLK_RIGHT:
-                    self.ChangeBehavior('Idle')
 
-                    self.DirectionX -= 1
-                elif event.key == SDLK_DOWN:
-                    self.ChangeBehavior('Idle')
-                    self.DirectionY += 1
-                elif event.key == SDLK_UP:
-                    self.ChangeBehavior('Idle')
-                    self.DirectionY -= 1
+
+
+
 
     def ResisterRunImage(self,runImage = Image):
         self.RunImage = runImage
 
-
+    def SetCharacterSpeed(self,speed = int):
+        self.speed = speed
 
     def Draw(self,Scale=int):
 
         self.FrameCount = (self.FrameCount + 1) % self.CurrentImage.Frame
-        self.x += self.DirectionX * 5
-        self.y += self.DirectionY * 5
+        self.x += self.DirectionX * self.speed
+        self.y += self.DirectionY * self.speed
+
+        self.x = clamp(20,self.x,get_canvas_width())
+        self.y = clamp(20,self.y,get_canvas_height())
+
 
         if not self.isComposite:
             self.Object.clip_draw(
@@ -151,6 +133,7 @@ Character_RunImage = Image("_Run.png", 10, 120, 80)
 
 MainCharacter = Character(Character_IdleImage)
 MainCharacter.ResisterRunImage(Character_RunImage)
+MainCharacter.SetCharacterSpeed(10)
 
 
 EventList: List[Any] = []
