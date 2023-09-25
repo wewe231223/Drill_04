@@ -4,6 +4,7 @@ from pico2d import *
 import string
 from enum import Enum, auto
 
+
 BackGround_Width, BackGround_Height = 1280, 1024
 
 open_canvas(BackGround_Width, BackGround_Height)
@@ -44,6 +45,7 @@ class Character:
         self.y = 400
         self.speed = 5
         self.isComposite = False
+        self.State = Behavior.Run.name
 
     def ChangeBehavior(self, TargetBehavior=Behavior):
         if TargetBehavior == Behavior.Idle.name:
@@ -63,7 +65,50 @@ class Character:
 
     def EventHandler(self,Events = List[Any]):
 
-        pass 
+        OldX = self.x
+        OldY = self.y
+
+
+
+        for event in Events:
+
+
+
+            if event.type == SDL_KEYDOWN:
+                if event.key == SDLK_LEFT:
+                    self.DirectionX -= 1
+                    self.isComposite = True
+                elif event.key == SDLK_RIGHT:
+                    self.DirectionX += 1
+                    self.isComposite = False
+
+
+            
+
+
+
+            if event.type == SDL_KEYUP:
+
+                if event.key == SDLK_RIGHT:
+                    self.DirectionX -= 1
+                elif event.key == SDLK_LEFT:
+                    self.DirectionX += 1
+
+
+
+        self.x += self.DirectionX * self.speed
+
+        if self.x == OldX:
+            if self.State != 'Idle':
+                self.ChangeBehavior('Idle')
+                self.State = 'Idle'
+        else:
+            if self.State != 'Run':
+                self.ChangeBehavior('Run')
+                self.State = 'Run'
+
+
+
 
 
 
@@ -80,8 +125,6 @@ class Character:
     def Draw(self,Scale=int):
 
         self.FrameCount = (self.FrameCount + 1) % self.CurrentImage.Frame
-        self.x += self.DirectionX * self.speed
-        self.y += self.DirectionY * self.speed
 
         self.x = clamp(20,self.x,get_canvas_width())
         self.y = clamp(20,self.y,get_canvas_height())
