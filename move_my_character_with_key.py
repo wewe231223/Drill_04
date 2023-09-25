@@ -1,9 +1,18 @@
 from typing import List, Any
-
 from pico2d import *
 import string
 from enum import Enum, auto
 
+
+#2020182009
+
+
+'''
+==README==
+
+화살표 상,하,좌,우 로 움직입니다 
+
+'''
 
 BackGround_Width, BackGround_Height = 1280, 1024
 
