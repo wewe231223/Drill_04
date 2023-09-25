@@ -83,7 +83,11 @@ class Character:
                     self.isComposite = False
 
 
-            
+                if event.key == SDLK_DOWN:
+                    self.DirectionY -= 1
+                elif event.key == SDLK_UP:
+                    self.DirectionY += 1;
+
 
 
 
@@ -94,11 +98,18 @@ class Character:
                 elif event.key == SDLK_LEFT:
                     self.DirectionX += 1
 
+                if event.key == SDLK_DOWN:
+                    self.DirectionY += 1
+                elif event.key == SDLK_UP:
+                    self.DirectionY -= 1;
 
 
         self.x += self.DirectionX * self.speed
+        self.y += self.DirectionY * self.speed
 
-        if self.x == OldX:
+
+
+        if self.x == OldX and self.y == OldY:
             if self.State != 'Idle':
                 self.ChangeBehavior('Idle')
                 self.State = 'Idle'
@@ -106,8 +117,6 @@ class Character:
             if self.State != 'Run':
                 self.ChangeBehavior('Run')
                 self.State = 'Run'
-
-
 
 
 
