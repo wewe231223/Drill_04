@@ -39,6 +39,7 @@ class Character:
         self.Object = load_image(DefaultImg.Path)
         self.FrameCount = 0
         self.DirectionX = 0
+        self.DirectionY = 0
         self.x = 400
         self.y = 400
         self.isComposite = False
@@ -71,7 +72,11 @@ class Character:
                     self.DirectionX += 1
                 elif event.key == SDLK_DOWN:
                     self.ChangeBehavior('Run')
-                    
+                    self.DirectionY -= 1
+                elif event.key == SDLK_UP:
+                    self.ChangeBehavior('Run')
+                    self.DirectionY += 1
+
 
             elif event.type == SDL_KEYUP:
                 if event.key == SDLK_LEFT:
@@ -82,7 +87,12 @@ class Character:
                     self.ChangeBehavior('Idle')
 
                     self.DirectionX -= 1
-
+                elif event.key == SDLK_DOWN:
+                    self.ChangeBehavior('Idle')
+                    self.DirectionY += 1
+                elif event.key == SDLK_UP:
+                    self.ChangeBehavior('Idle')
+                    self.DirectionY -= 1
 
     def ResisterRunImage(self,runImage = Image):
         self.RunImage = runImage
@@ -93,6 +103,7 @@ class Character:
 
         self.FrameCount = (self.FrameCount + 1) % self.CurrentImage.Frame
         self.x += self.DirectionX * 5
+        self.y += self.DirectionY * 5
 
         if not self.isComposite:
             self.Object.clip_draw(
