@@ -1,5 +1,6 @@
 from pico2d import *
 import string
+from enum import Enum, auto
 
 BackGround_Width,BackGround_Height = 1280, 1024
 
@@ -28,12 +29,21 @@ class Image:
         self.Height = height
 
 
+class Behavior(Enum):
+    pass
+
 class Character:
     def __init__(self,DefaultImg = Image):
         self.IdleImage = DefaultImg
         self.CurrentImage = DefaultImg
         self.Object = load_image(DefaultImg.Path)
         self.FrameCount = 0
+
+    def ChangeBehavior(self):
+        pass 
+
+
+
 
     def Draw(self,x = int,y = int,Scale = int):
 
@@ -72,6 +82,7 @@ def HandleEvent():
 
 
 Character_IdleImage = Image("_Idle.png", 10, 120, 80)
+Character_RunImage = Image("_Run.png",10,120,80 )
 MainCharacter = Character(Character_IdleImage)
 
 FrameNo = 0
@@ -84,7 +95,7 @@ while running:
     #Draw between here
     MainCharacter.Draw(400, 400,4)
 
-    
+
 
 
 
