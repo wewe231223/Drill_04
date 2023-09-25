@@ -1,3 +1,5 @@
+from typing import List, Any
+
 from pico2d import *
 import string
 from enum import Enum, auto
@@ -36,39 +38,61 @@ class Character:
         self.CurrentImage = DefaultImg
         self.Object = load_image(DefaultImg.Path)
         self.FrameCount = 0
-        self.Direction = 0
+        self.DirectionX = 0
         self.x = 400
         self.y = 400
         self.isComposite = False
 
     def ChangeBehavior(self, TargetBehavior=Behavior):
-        if TargetBehavior == Behavior.Idle:
+        if TargetBehavior == Behavior.Idle.name:
             self.FrameCount = 0
             if self.IdleImage is not None:
                 self.CurrentImage = self.IdleImage
 
-        elif TargetBehavior == Behavior.Run:
+
+        elif TargetBehavior == Behavior.Run.name:
             self.FrameCount = 0
             if self.RunImage is not None:
                 self.CurrentImage = self.RunImage
+                print("Run")
 
 
-    def EventHandler(self):
-        events = get_events()
-        for event in events:
+        self.Object = load_image(self.CurrentImage.Path)
+
+    def EventHandler(self,Events = List[Any]):
+        for event in Events:
             if event.type == SDL_KEYDOWN:
-                pass
+                if event.key == SDLK_LEFT:
+                    self.ChangeBehavior('Run')
+                    self.isComposite = True
+                    self.DirectionX -= 1
+                elif event.key == SDLK_RIGHT:
+                    self.ChangeBehavior('Run')
+                    self.DirectionX += 1
+                elif event.key == SDLK_DOWN:
+                    self.ChangeBehavior('Run')
+                    
+
+            elif event.type == SDL_KEYUP:
+                if event.key == SDLK_LEFT:
+                    self.ChangeBehavior('Idle')
+                    self.isComposite = False
+                    self.DirectionX += 1
+                elif event.key == SDLK_RIGHT:
+                    self.ChangeBehavior('Idle')
+
+                    self.DirectionX -= 1
 
 
-
-
+    def ResisterRunImage(self,runImage = Image):
+        self.RunImage = runImage
 
 
 
     def Draw(self,Scale=int):
 
         self.FrameCount = (self.FrameCount + 1) % self.CurrentImage.Frame
-        self.x += self.Direction * 5
+        self.x += self.DirectionX * 5
 
         if not self.isComposite:
             self.Object.clip_draw(
@@ -95,12 +119,11 @@ class Character:
                 100 * Scale,
             )
 
-def HandleEvent():
+def HandleEvent(Events = List[Any]):
     global running
 
-    events = get_events()
 
-    for event in events:
+    for event in Events:
         if event.type == SDL_QUIT:
             running = False
             return
@@ -112,20 +135,24 @@ def HandleEvent():
 
 Character_IdleImage = Image("_Idle.png", 10, 120, 80)
 Character_RunImage = Image("_Run.png", 10, 120, 80)
-MainCharacter = Character(Character_IdleImage)
-MainCharacter.isComposite = True
-FrameNo = 0
 
+
+
+MainCharacter = Character(Character_IdleImage)
+MainCharacter.ResisterRunImage(Character_RunImage)
+
+
+EventList: List[Any] = []
 # Main Process
 while running:
     clear_canvas()
-
+    EventList = get_events()
     BackGround.draw(BackGround_Width // 2, BackGround_Height // 2)
     # Draw between here
 
+    MainCharacter.EventHandler(EventList)
     MainCharacter.Draw(4)
-
     # Draw between here
     delay(0.05)
-    HandleEvent()
+    HandleEvent(EventList)
     update_canvas()
